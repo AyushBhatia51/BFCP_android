@@ -32,24 +32,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-       try {
-           bfcp_entity bfcpEntity = new bfcp_entity();
-           Log.d("hh",String.valueOf(bfcpEntity));
-           bfcpEntity.sethello();
+        try {
+            bfcp_entity bfcpEntity = new bfcp_entity();
+            Log.d("hh", String.valueOf(bfcpEntity));
+            bfcpEntity.sethello();
 
 
-
-           String a = bfcpEntity.gethello();
-
-
-           System.out.println(a);
-           System.out.println(a);
-           Log.d("hh", String.valueOf(a));
+            String a = bfcpEntity.gethello();
 
 
-       }catch (Exception e){
-           System.out.println(e);
-       }
+            System.out.println(a);
+            System.out.println(a);
+            Log.d("hh", String.valueOf(a));
+
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
 //       String hostname = "192.168.8.138";
 //       int port =  2345;
@@ -91,30 +90,11 @@ public class MainActivity extends AppCompatActivity {
 //        gfgThread.start();
 
 
-
-//        public class TCPClient {
-//            public static void main(String[] args) {
-//                try {
-//                    Socket socket = new Socket("localhost", 8080); // connect to server
-//                    OutputStream out = socket.getOutputStream();
-//                    out.write("Hello, server!".getBytes()); // send message to server
-//                    out.flush();
-//
-//                    InputStream in = socket.getInputStream();
-//                    byte[] buffer = new byte[1024];
-//                    int bytesRead = in.read(buffer); // read response from server
-//                    String response = new String(buffer, 0, bytesRead);
-//                    System.out.println("Server response: " + response);
-//
-//                    socket.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-
-
     }
+
+
+
+
 
     bfcp_participant bfcpParticipant = new bfcp_participant();
 

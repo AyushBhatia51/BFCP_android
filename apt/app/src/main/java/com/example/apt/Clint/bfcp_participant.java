@@ -10,6 +10,7 @@ import com.example.apt.JNIbfcp.bfcp_participant_information;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -22,8 +23,10 @@ public int bfcp_transport ;
 public int BFCP_OVER_TLS =1;
 public int BFCP_OVER_TCP =0;
 public static short base_transactionID =1;
+
+public static Socket socket;
     public static  Object BFCP_SEND_CHECK_ERRORS = null;
-    public static int server_sock;
+
 
     public int bfcp_hello_participant(bfcp_participant_information participant) {
 
@@ -55,7 +58,7 @@ public static short base_transactionID =1;
 //        pthread_mutex_unlock(&count_mutex);
 
         /* Send the message to the FCS */
-        error = send_message_to_server(message, server_sock);
+        error = send_message_to_server(message, socket);
         BFCP_SEND_CHECK_ERRORS.toString();
         return 0;
     }
@@ -83,7 +86,7 @@ public static short base_transactionID =1;
         bfcp_entity entity;
     }
 
-    int send_message_to_server(bfcp_message message, int sockfd){
+    int send_message_to_server(bfcp_message message, Socket socket){
         if(message == null)
             return -1;
         int  byteleft = 0;
@@ -152,6 +155,25 @@ public static short base_transactionID =1;
         bfcp_message message = null;
         int in_length;
 //        String common_header =(String)
+
+
+        try {
+            Socket socket = new Socket("192.168.8.138", 2345); // connect to server
+            OutputStream out = socket.getOutputStream();
+            out.write("Hello, server!".getBytes()); // send message to server
+            out.flush();
+
+            InputStream in = socket.getInputStream();
+            byte[] buffer = new byte[1024];
+            int bytesRead = in.read(buffer); // read response from server
+            String response = new String(buffer, 0, bytesRead);
+            System.out.println("Server response: " + response);
+
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
        close_socket = 0;
 
         return null;
