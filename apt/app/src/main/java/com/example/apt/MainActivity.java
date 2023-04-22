@@ -5,7 +5,7 @@ import static java.sql.Types.NULL;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.apt.Clint.bfcp_participant;
+import com.example.apt.Clint.BFCPclient;
 import com.example.apt.JNIbfcp.Conference_participent;
 import com.example.apt.JNIbfcp.bfcp_participant_information;
 import com.example.apt.JNIbfcp.*;
@@ -30,7 +30,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        int conferenceID = 1001;
+        int userID =0 , floorID = 0, benificiaryID = 0;
+        bfcp_participant_information list = new bfcp_participant_information();
+        list.conferenceID = 1001;
+        list.userID= 3001;
+        bfcp_floors_participant node = new bfcp_floors_participant();
+        node.floorID = 1;
+        node.sInfo = 0;
+        list.floors_participant = node;
+        floors_participant temp_floors = null;
+        int transport = -1, error= 0,status=0,port_server=0,query_position=0;
+        short floorRequestID = 0;
+        //list = null;
+        try {
+            error = bfcpParticipant.bfcp_hello_participant(list);
+            BFCP_CHECK_MESSAGE.toString();
+        }catch (Exception e){
+            Log.d("exception",String.valueOf(error));
+        }
 
         try {
             bfcp_entity bfcpEntity = new bfcp_entity();
@@ -88,15 +106,8 @@ public class MainActivity extends AppCompatActivity {
 //        });
 //
 //        gfgThread.start();
-
-
     }
-
-
-
-
-
-    bfcp_participant bfcpParticipant = new bfcp_participant();
+    BFCPclient bfcpParticipant = new BFCPclient();
 
 
     public  void  manu(String linestr){
@@ -132,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 "------------------------------------------------------\n\n";
         TextView txt = (TextView) findViewById(R.id.text);
         txt.setText(s);
+
         int i = 0 ;
         while (i < line.length()){
             switch(line) {
