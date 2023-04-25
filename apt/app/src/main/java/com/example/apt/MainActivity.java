@@ -1,7 +1,6 @@
 package com.example.apt;
-import java.net.*;
-import java.io.*;
-import static java.sql.Types.NULL;
+
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +12,7 @@ import com.example.apt.JNIbfcp.*;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -25,11 +25,16 @@ import java.net.UnknownHostException;
 public class MainActivity extends AppCompatActivity {
 
     public static  Object BFCP_CHECK_MESSAGE = null ;
+    Button bt ;
+    BFCPclient bfcpParticipant = new BFCPclient();
 
-    @Override
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        bt = (Button) findViewById(R.id.requestbtn);
         int conferenceID = 1001;
         int userID =0 , floorID = 0, benificiaryID = 0;
         bfcp_participant_information list = new bfcp_participant_information();
@@ -104,80 +109,85 @@ public class MainActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
+
+        bfcp_participant_information bfcp_participant_information = new bfcp_participant_information();
 //
 //        gfgThread.start();
+        bt.setOnClickListener(v -> {
+            BFCPclient.bfcp_hello_participant(bfcp_participant_information);
+
+        });
     }
-    BFCPclient bfcpParticipant = new BFCPclient();
 
 
-    public  void  manu(String linestr){
-        String line = null, text= null,text1=null;
-        long conferenceID = 0;
-        int userID =0 , floorID = 0, benificiaryID = 0;
-        bfcp_participant_information list = null;
-        bfcp_floors_participant node = null;
-        floors_participant temp_floors = null;
-        int transport = -1, error= 0,status=0,port_server=0,query_position=0;
-        short floorRequestID = 0;
-        list = null;
-
-
-
-
-        String s= "\n--------PARTICIPANT LIST-----------------------------\n"+
-                " ?      - Show the menu\n"+
-                " c      - Create the Participant\n"+
-                " h      - Destroy the Participant\n"+
-                " i      - Insert a new floor\n"+
-                " d      - Remove a floor\n"+
-                " s      - Show the information of the conference\n"+
-                "BFCP Messages:\n"+
-                " f      - Hello\n"+
-                " r      - FloorRequest\n"+
-                " l      - FloorRelease\n"+
-                " o      - FloorRequestQuery\n"+
-                " u      - UserQuery\n"+
-                " e      - FloorQuery\n"+
-                " a      - ChairAction\n"+
-                " q      - quit                   \n"+
-                "------------------------------------------------------\n\n";
-        TextView txt = (TextView) findViewById(R.id.text);
-        txt.setText(s);
-
-        int i = 0 ;
-        while (i < line.length()){
-            switch(line) {
-                case "?":
-             System.out.println("\"\\n--------PARTICIPANT LIST-----------------------------\\n\",\n" +
-                     "                \" ?      - Show the menu\\n\",\n" +
-                     "                \" c      - Create the Participant\\n\",\n" +
-                     "                \" h      - Destroy the Participant\\n\",\n" +
-                     "                \" i      - Insert a new floor\\n\",\n" +
-                     "                \" d      - Remove a floor\\n\",\n" +
-                     "                \" s      - Show the information of the conference\\n\",\n" +
-                     "                \"BFCP Messages:\\n\",\n" +
-                     "                \" f      - Hello\\n\",\n" +
-                     "                \" r      - FloorRequest\\n\",\n" +
-                     "                \" l      - FloorRelease\\n\",\n" +
-                     "                \" o      - FloorRequestQuery\\n\",\n" +
-                     "                \" u      - UserQuery\\n\",\n" +
-                     "                \" e      - FloorQuery\\n\",\n" +
-                     "                \" a      - ChairAction\\n\",\n" +
-                     "                \" q      - quit                   \\n\",\n" +
-                     "                \"------------------------------------------------------\\n\\n\"");
-                    break;
-
-                case "f":
-                   ++i;
-                   error = bfcpParticipant.bfcp_hello_participant(list);
-                    BFCP_CHECK_MESSAGE.toString();
-                    break;
-                default:break;
-            }
-            i++;
-        }
-
-    }
+//    public  void  manu(String linestr){
+//        String line = null, text= null,text1=null;
+//        long conferenceID = 0;
+//        int userID =0 , floorID = 0, benificiaryID = 0;
+//        bfcp_participant_information list = null;
+//        bfcp_floors_participant node = null;
+//        floors_participant temp_floors = null;
+//        int transport = -1, error= 0,status=0,port_server=0,query_position=0;
+//        short floorRequestID = 0;
+//        list = null;
+//
+//
+//
+//
+//        String s= "\n--------PARTICIPANT LIST-----------------------------\n"+
+//                " ?      - Show the menu\n"+
+//                " c      - Create the Participant\n"+
+//                " h      - Destroy the Participant\n"+
+//                " i      - Insert a new floor\n"+
+//                " d      - Remove a floor\n"+
+//                " s      - Show the information of the conference\n"+
+//                "BFCP Messages:\n"+
+//                " f      - Hello\n"+
+//                " r      - FloorRequest\n"+
+//                " l      - FloorRelease\n"+
+//                " o      - FloorRequestQuery\n"+
+//                " u      - UserQuery\n"+
+//                " e      - FloorQuery\n"+
+//                " a      - ChairAction\n"+
+//                " q      - quit                   \n"+
+//                "------------------------------------------------------\n\n";
+//        TextView txt = (TextView) findViewById(R.id.text);
+//        txt.setText(s);
+//
+//        int i = 0 ;
+//        while (i < line.length()){
+//            switch(line) {
+//                case "?":
+//             System.out.println("\"\\n--------PARTICIPANT LIST-----------------------------\\n\",\n" +
+//                     "                \" ?      - Show the menu\\n\",\n" +
+//                     "                \" c      - Create the Participant\\n\",\n" +
+//                     "                \" h      - Destroy the Participant\\n\",\n" +
+//                     "                \" i      - Insert a new floor\\n\",\n" +
+//                     "                \" d      - Remove a floor\\n\",\n" +
+//                     "                \" s      - Show the information of the conference\\n\",\n" +
+//                     "                \"BFCP Messages:\\n\",\n" +
+//                     "                \" f      - Hello\\n\",\n" +
+//                     "                \" r      - FloorRequest\\n\",\n" +
+//                     "                \" l      - FloorRelease\\n\",\n" +
+//                     "                \" o      - FloorRequestQuery\\n\",\n" +
+//                     "                \" u      - UserQuery\\n\",\n" +
+//                     "                \" e      - FloorQuery\\n\",\n" +
+//                     "                \" a      - ChairAction\\n\",\n" +
+//                     "                \" q      - quit                   \\n\",\n" +
+//                     "                \"------------------------------------------------------\\n\\n\"");
+//                    break;
+//
+//                case "f":
+//                   ++i;
+//                   error = bfcpParticipant.bfcp_hello_participant(list);
+//                    BFCP_CHECK_MESSAGE.toString();
+//                    break;
+//                default:break;
+//            }
+//            i++;
+//        }
+//
+//    }
 
 
 

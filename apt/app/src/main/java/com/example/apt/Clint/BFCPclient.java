@@ -23,41 +23,41 @@ public class BFCPclient {
     private static int BFCP_OVER_TLS = 2;
     private static int BFCP_FCS_DEFAULT_PORT = 9876; // or some other value
 
-    private int bfcp_transport=0;
-    private SSLContext context;
-    private SSLSocket session;
-    private Socket server_sock;
-    private Thread thread;
+    private static int bfcp_transport=0;
+    private static SSLContext context;
+    private static SSLSocket session;
+    private static Socket server_sock;
+    private static Thread thread;
     private Lock count_mutex = new ReentrantLock();
 
     private long conferenceID;
     private short userID;
 
-    private InetAddress serverAddress;
-    private int serverPort;
+    private static InetAddress serverAddress;
+    private static int serverPort;
 
-    public int bfcp_hello_participant(bfcp_participant_information participant) {
+    public static int bfcp_hello_participant(bfcp_participant_information participant) {
 
-        if(participant == null) {
-            return -1;
-        }
+//        if(participant == null) {
+//            return -1;
+//        }
 
         int error;
         bfcp_arguments arguments;
-        bfcp_message message = null;
+        bfcp_message message ;
 
 //        pthread_mutex_lock(&count_mutex);
 
         /* Prepare a new 'Hello' message */
         arguments = bfcp_new_arguments();
         Object primitive;
-        arguments.primitive = "Hello";
+//        arguments.primitive = null;
         Object entity;
         Object conferenceID;
         Object base_transactionID;
         Object userID;
-        Log.d("exception",String.valueOf(arguments.entity.conferenceID));
-        arguments.entity = (bfcp_entity) bfcp_new_entity(arguments.entity.conferenceID, arguments.entity.transactionID, arguments.entity.userID);
+//        Log.d("exception",String.valueOf(arguments.entity.conferenceID));
+//        arguments.entity = (bfcp_entity) bfcp_new_entity(arguments.entity.conferenceID, arguments.entity.transactionID, arguments.entity.userID);
         message = bfcp_build_message(arguments);
         if(message == null) {
 //            pthread_mutex_unlock(&count_mutex);
@@ -68,27 +68,30 @@ public class BFCPclient {
 
         /* Send the message to the FCS */
         error = send_message_to_server(message, socket);
+        System.out.println(error);
         BFCP_SEND_CHECK_ERRORS.toString();
-        return 0;
+        return error;
     }
-    private bfcp_message bfcp_build_message(bfcp_arguments arguments) {
+    public static bfcp_message bfcp_build_message(bfcp_arguments arguments) {
         return null;
     }
 
-    private Object bfcp_new_entity(Object o, Object base_transactionID, Object o1) {
+    public static Object bfcp_new_entity(Object o, Object base_transactionID, Object o1) {
         return null;
     }
-    private bfcp_arguments bfcp_new_arguments() {
+    public static  bfcp_arguments bfcp_new_arguments() {
         return null;
     }
 
 
 
-    int send_message_to_server(bfcp_message message, Socket socket) {
+    static int send_message_to_server(bfcp_message message, Socket socket) {
         try{
             connect();
+            Log.d("yes", "connected");
         }catch (Exception e){
-            Log.d("exception",String.valueOf(e));
+            Log.d("no",String.valueOf(e));
+
         }
         return 0;
     }
@@ -105,7 +108,7 @@ public class BFCPclient {
     }
 
 
-    public void connect() throws IOException {
+    public static void connect() throws IOException {
         bfcp_transport = BFCP_OVER_TCP; // or BFCP_OVER_TLS
 
         if(bfcp_transport == BFCP_OVER_TLS) {
@@ -152,11 +155,12 @@ public class BFCPclient {
         thread.start();
     }
 
-    private class bfcp_message {
+    private class  bfcp_message {
+//        public  String ss ="hello";
     }
 
     private class bfcp_arguments {
-        public String primitive;
-        bfcp_entity entity;
+        public String primitive = "hello";
+        public bfcp_entity entity;
     }
 }

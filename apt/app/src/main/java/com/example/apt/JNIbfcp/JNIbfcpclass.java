@@ -10,7 +10,7 @@ public class JNIbfcpclass extends bfcp_entity{
             Log.e("succccccccc", "load lib successfully");
         } catch (UnsatisfiedLinkError e) {
             System.err.println("Failed to load native library libbfcpmsg\n" + e);
-            Log.e("failedffff", "asdfjklsdl;l;: ");
+            Log.e("failedffff", "asdf: ");
         }
     }
     public final static native String bfcp_build_message_Hello(String str);
