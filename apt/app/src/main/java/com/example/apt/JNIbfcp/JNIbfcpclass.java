@@ -2,6 +2,8 @@ package com.example.apt.JNIbfcp;
 
 import android.util.Log;
 
+//import com.example.apt.Clint.BFCPclient;
+
 public class JNIbfcpclass extends bfcp_entity{
     static {
 
@@ -13,7 +15,6 @@ public class JNIbfcpclass extends bfcp_entity{
             Log.e("failedffff", "asdf: ");
         }
     }
-    public final static native String bfcp_build_message_Hello(String str);
-
+    public final static native bfcp_message bfcp_build_message_Hello(bfcp_entity entity);
     }
 
