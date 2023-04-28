@@ -33,17 +33,20 @@ public class MainActivity extends AppCompatActivity {
 
 //
 
-
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+       // JNIbfcpclass myclass = new JNIbfcpclass();
+        //bfcp_message result = myclass.bfcp_build_message_Hello()
         bfcp_participant_information initialpart = new bfcp_participant_information();
         bfcp_received_message_handler bfcpReceivedMessageHandler =new bfcp_received_message_handler();
         initialpart.bfcp_initialize_bfcp_participant(3001,1001,"192.168.8,138",2345,bfcpReceivedMessageHandler,0);
         Log.e("parti",String.valueOf(initialpart.getConferenceID()));
-        int error = bfcp_client.bfcp_hello_participant(initialpart);
+        bfcp_client newcli = new bfcp_client();
+        int error = newcli.bfcp_hello_participant(initialpart);
         Log.d("error","Error"+error);
+
 
 
 

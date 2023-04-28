@@ -14,7 +14,9 @@ public class JNIbfcpclass extends bfcp_entity{
             System.err.println("Failed to load native library libbfcpmsg\n" + e);
             Log.e("failedffff", "asdf: ");
         }
+
     }
-    public final static native bfcp_message bfcp_build_message_Hello(bfcp_entity entity);
+
+    public final native bfcp_message bfcp_build_message_Hello(bfcp_entity entity);
     }
 
