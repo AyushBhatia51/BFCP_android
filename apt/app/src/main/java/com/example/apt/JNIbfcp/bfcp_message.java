@@ -4,6 +4,18 @@ public class bfcp_message {
     private String buffer;
     private short position;
     private short length;
+    //MsgPtr
+    private long msgPtr;
+
+
+    public long getMsgPtr() {
+        return msgPtr;
+    }
+
+    public void setMsgPtr(long msgPtr) {
+        this.msgPtr = msgPtr;
+    }
+    //MsgPtr
 
     public String getBuffer() {
         return buffer;

@@ -112,18 +112,13 @@ public class bfcp_client {
             output.flush();
         }catch (Exception e){
             Log.d("no",String.valueOf(e));
-
         }
         return 0;
     }
  bfcp_message bfcpMessage = new bfcp_message();
-    
-
-
 
     public static void connect() throws IOException {
         bfcp_transport = BFCP_OVER_TCP; // or BFCP_OVER_TLS
-
         if (bfcp_transport == BFCP_OVER_TLS) {
             /* Initialize TLS-related stuff */
             try {
@@ -134,7 +129,6 @@ public class bfcp_client {
                 return;
             }
         }
-
 //        try {
 //            SocketAddress serverSocketAddress = new InetSocketAddress(serverAddress, serverPort);
 //            server_sock = new Socket();
@@ -170,13 +164,6 @@ public class bfcp_client {
 //    }
 
 
-//       class bfcp_arguments {
-//            public String primitive = "hello";
-//            public bfcp_entity entity;
-//        }
     }
 
-//    private static class bfcp_arguments {
-//
-//    }
 }
