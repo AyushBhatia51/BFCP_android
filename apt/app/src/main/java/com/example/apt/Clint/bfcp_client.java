@@ -116,6 +116,8 @@ public class bfcp_client {
         }
         return 0;
     }
+ bfcp_message bfcpMessage = new bfcp_message();
+    
 
 
 
@@ -132,6 +134,7 @@ public class bfcp_client {
                 return;
             }
         }
+
 //        try {
 //            SocketAddress serverSocketAddress = new InetSocketAddress(serverAddress, serverPort);
 //            server_sock = new Socket();

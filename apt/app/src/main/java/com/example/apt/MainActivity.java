@@ -210,13 +210,13 @@ public class MainActivity extends AppCompatActivity {
 //
 //}
 
-        bfcp_message bfcpMessage = new bfcp_message();
-        bfcpMessage.sethello();
-        bfcp_message a = bfcpMessage.gethello();
-
-        System.out.println(a);
-        System.out.println(a);
-        Log.d("hh", String.valueOf(a));
+//        bfcp_message bfcpMessage = new bfcp_message();
+//        bfcpMessage.sethello();
+//        bfcp_message a = bfcpMessage.gethello();
+//
+//        System.out.println(a);
+//        System.out.println(a);
+//        Log.d("hh", String.valueOf(a));
 //
 
         etIP = findViewById(R.id.etIP);
