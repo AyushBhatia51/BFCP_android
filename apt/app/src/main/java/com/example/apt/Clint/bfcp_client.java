@@ -2,6 +2,7 @@ package com.example.apt.Clint;
 
 import static android.system.Os.connect;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.example.apt.JNIbfcp.JNIbfcpclass;
@@ -42,7 +43,9 @@ public class bfcp_client {
 
     private static InetAddress serverAddress;
     private static int serverPort;
+   public static bfcp_message message;
 
+    @SuppressLint("SuspiciousIndentation")
     public int bfcp_hello_participant(bfcp_participant_information participant) {
 
 //        if(participant == null) {
@@ -51,34 +54,49 @@ public class bfcp_client {
 
         int error;
         bfcp_arguments arguments = new bfcp_arguments();
-        bfcp_message message ;
+
 
 //        pthread_mutex_lock(&count_mutex);
 //
         /* Prepare a new 'Hello' message */
-
         arguments.primitive = "Hello";
 //        arguments.primitive = null;
         bfcp_entity rrr = new bfcp_entity();
-        rrr.conferenceID = 3001;
+        rrr.conferenceID = 1001;
         rrr.transactionID = 0;
-        rrr.userID = 1001;
-
+        rrr.userID = 3001;
         arguments.entity = rrr;
+        arguments.fID = 2001;
+        arguments.frqID = 0;
+        arguments.bID = 0;
+        arguments.priority = 0;
+        arguments.frqInfo = null;
+        arguments.beneficiary = null;
+        arguments.rs = null;
+        arguments.pInfo = null;
+        arguments.sInfo = null;
+        arguments.error = null;
+        arguments.eInfo = null;
+        arguments.primitives = null;
+        arguments.attributes = null;
+        arguments.nonce = 0;
+        arguments.digest = null;
         Log.d("exception",String.valueOf(arguments.entity.conferenceID));
         message = bfcp_build_message(arguments);
+
+        Log.d("Data_from_lib", String.valueOf(message));
+
         if(message == null) {
 //            pthread_mutex_unlock(&count_mutex);
             return -1;
         }
-//
 //        pthread_mutex_unlock(&count_mutex);
-
         /* Send the message to the FCS */
 
-        error = send_message_to_server(message);
-        System.out.println(error);
-        BFCP_SEND_CHECK_ERRORS.toString();
+            error = send_message_to_server(message);
+            System.out.println(error);
+//            BFCP_SEND_CHECK_ERRORS.toString();
+
         return error;
     }
     public  bfcp_message bfcp_build_message(bfcp_arguments arguments) {
@@ -98,9 +116,6 @@ public class bfcp_client {
 //    bfcp_new_arguments() {
 //        return null;
 //    }
-
-
-
    public static int send_message_to_server(bfcp_message message) {
        PrintWriter output;
        BufferedReader input;
@@ -109,6 +124,7 @@ public class bfcp_client {
             output = new PrintWriter(socket.getOutputStream());
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output.write(String.valueOf(message));
+            Log.d("Socket connected","Success");
             output.flush();
         }catch (Exception e){
             Log.d("no",String.valueOf(e));

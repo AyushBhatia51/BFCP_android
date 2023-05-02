@@ -2,16 +2,16 @@ package com.example.apt.JNIbfcp;
 
 public class bfcp_message {
     private String buffer;
-    private short position;
-    private short length;
+    private int position;
+    private int length;
     //MsgPtr
     private long msgPtr;
 
+    bfcp_entity entity = new bfcp_entity();
 
     public long getMsgPtr() {
         return msgPtr;
     }
-
     public void setMsgPtr(long msgPtr) {
         this.msgPtr = msgPtr;
     }
@@ -25,7 +25,7 @@ public class bfcp_message {
         this.buffer = buffer;
     }
 
-    public short getPosition() {
+    public int getPosition() {
         return position;
     }
 
@@ -33,7 +33,7 @@ public class bfcp_message {
         this.position = position;
     }
 
-    public short getLength() {
+    public int getLength() {
         return length;
     }
 
@@ -47,5 +47,10 @@ public class bfcp_message {
 //       // return  JNIbfcpclass.bfcp_build_message_Hello(this.bfcpEntity);
 //        return null;
 //    }
+
+    public int getentity(int conf){
+        entity.conferenceID = conf;
+        return conf;
+    }
 
 }
