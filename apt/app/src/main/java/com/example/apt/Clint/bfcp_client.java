@@ -59,7 +59,7 @@ public class bfcp_client {
 //        pthread_mutex_lock(&count_mutex);
 //
         /* Prepare a new 'Hello' message */
-        arguments.primitive = "Hello";
+        arguments.primitive = 11;
 //        arguments.primitive = null;
         bfcp_entity rrr = new bfcp_entity();
         rrr.conferenceID = 1001;
@@ -100,7 +100,7 @@ public class bfcp_client {
         return error;
     }
     public  bfcp_message bfcp_build_message(bfcp_arguments arguments) {
-        if(arguments.primitive == "Hello"){
+        if(arguments.primitive == 11){
             return myclass.bfcp_build_message_Hello(arguments.entity);
             //return arguments;
         }

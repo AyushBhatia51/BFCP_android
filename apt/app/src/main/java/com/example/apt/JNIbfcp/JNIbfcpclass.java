@@ -2,7 +2,7 @@ package com.example.apt.JNIbfcp;
 
 import android.util.Log;
 
-//import com.example.apt.Clint.BFCPclient;
+import com.example.apt.Clint.bfcp_arguments;
 
 public class JNIbfcpclass extends bfcp_entity{
     static {

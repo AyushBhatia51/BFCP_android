@@ -3,7 +3,7 @@ package com.example.apt.Clint;
 import com.example.apt.JNIbfcp.bfcp_entity;
 
 public class bfcp_arguments {
-        public String primitive;
+        public int primitive;
         public bfcp_entity entity;
         public int fID;                             // Floor ID list
         public int frqID;                                     // Floor Request ID
@@ -20,4 +20,6 @@ public class bfcp_arguments {
         public bfcp_supported_list attributes;                    // Supported Attributes list
         public int nonce;                                     // Nonce (currently UNUSED)
         public bfcp_digest digest;
+
+
 }

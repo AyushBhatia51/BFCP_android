@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,10 +27,10 @@ public class MainActivity extends AppCompatActivity {
     EditText etMessage;
     public static bfcp_message message1 ;
     Button btnSend;
-    String SERVER_IP;
+    String SERVER_IP ="192.168.8.138";
     bfcp_message  newmsg;
     Socket socket;
-    int SERVER_PORT;
+    int SERVER_PORT =2345;
     private bfcp_message bfM;
     DataOutputStream dataOutputStream;
     ObjectOutputStream objout;
@@ -57,8 +58,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 tvMessages.setText("");
-                SERVER_IP = etIP.getText().toString().trim();
-                SERVER_PORT = Integer.parseInt(etPort.getText().toString().trim());
+//                SERVER_IP = etIP.getText().toString().trim();
+                SERVER_IP = "192.168.8.138";
+//                SERVER_PORT = Integer.parseInt(etPort.getText().toString().trim());
+                SERVER_PORT = 2345;
                 Thread1 = new Thread(new Thread1());
                 Thread1.start();
             }
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    }
+        }
 
     private PrintWriter output;
 
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 socket = new Socket(SERVER_IP, SERVER_PORT);
                 output = new PrintWriter(socket.getOutputStream());
                 objout = new ObjectOutputStream(socket.getOutputStream());
+                dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 runOnUiThread(new Runnable() {
                     @Override
@@ -101,29 +105,32 @@ public class MainActivity extends AppCompatActivity {
                 });
                 new Thread(new Thread2()).start();
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
+                Log.d("not Connected","to server");
             }
         }
     }
 
     class Thread2 implements Runnable {
-        bfcp_message message = new bfcp_message();
+        String message;
+//                = new bfcp_message();
 
         @Override
         public void run() {
             while (true) {
                 try {
-                    String message = input.readLine();
-
-                    if (message != null) {
-                        runOnUiThread(() -> tvMessages.append("server: " + message + " "));
-                    } else {
-                        Thread1 = new Thread(new Thread1());
-                        Thread1.start();
-                        return;
-                    }
+                    message = input.readLine();
                 } catch (IOException e) {
-                    e.printStackTrace();
+//                    throw new RuntimeException(e);
+                    Log.d("Unable to read",message);
+                }
+
+                if (message != null) {
+                    runOnUiThread(() -> tvMessages.append("server: " + message + " "));
+                } else {
+                    Thread1 = new Thread(new Thread1());
+                    Thread1.start();
+                    return;
                 }
             }
         }
@@ -136,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             message = newmsg;
         }
 
-
+//        int message2 = message.getLength();
 
 
         @Override
@@ -144,9 +151,16 @@ public class MainActivity extends AppCompatActivity {
 //            output.write(String.valueOf(message));
             try {
                 objout.writeObject(message);
-                objout.flush();
+                ByteArrayOutputStream boas = new ByteArrayOutputStream();
+                ObjectOutputStream ois = new ObjectOutputStream(boas);
+                ois.writeObject(message);
+//                dataOutputStream.write(message);
+//                dataOutputStream.flush();
+//                ois.flush();
+                //                objout.flush();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+//                throw new RuntimeException(e);
+                Log.d("Unable to write", String.valueOf(objout));
             }
 
             runOnUiThread(new Runnable() {
@@ -157,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+
     }
 }
 
