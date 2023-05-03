@@ -2,6 +2,7 @@ package com.example.apt;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.apt.Clint.bfcp_arguments;
 import com.example.apt.Clint.bfcp_client;
 import com.example.apt.JNIbfcp.*;
 import android.annotation.SuppressLint;
@@ -25,10 +26,9 @@ public class MainActivity extends AppCompatActivity {
     EditText etIP, etPort;
     TextView tvMessages;
     EditText etMessage;
-    public static bfcp_message message1 ;
     Button btnSend;
     String SERVER_IP ="192.168.8.138";
-    bfcp_message  newmsg;
+    bfcp_message message;
     Socket socket;
     int SERVER_PORT =2345;
     private bfcp_message bfM;
@@ -66,15 +66,13 @@ public class MainActivity extends AppCompatActivity {
                 Thread1.start();
             }
         });
-        bfcp_client bfcpClient = new bfcp_client();
-        newmsg = bfcpClient.message;
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                String message = etMessage.getText().toString().trim();
 
-                if (newmsg != null) {
-                    new Thread(new Thread3(newmsg)).start();
+                if (messagedata() != null) {
+                    new Thread(new Thread3(messagedata())).start();
                 }
                 System.out.println("hello");
             }
@@ -82,6 +80,63 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+
+
+
+
+      public byte[] messagedata(){
+          bfcp_arguments arguments = new bfcp_arguments();
+          bfcp_client bfcpClient = new bfcp_client();
+
+
+//        pthread_mutex_lock(&count_mutex);
+//
+          /* Prepare a new 'Hello' message */
+          arguments.primitive = 11;
+//        arguments.primitive = null;
+          bfcp_entity rrr = new bfcp_entity();
+          rrr.conferenceID = 1001;
+          rrr.transactionID = 0;
+          rrr.userID = 3001;
+          arguments.entity = rrr;
+          arguments.fID = 2001;
+          arguments.frqID = 0;
+          arguments.bID = 0;
+          arguments.priority = 0;
+          arguments.frqInfo = null;
+          arguments.beneficiary = null;
+          arguments.rs = null;
+          arguments.pInfo = null;
+          arguments.sInfo = null;
+          arguments.error = null;
+          arguments.eInfo = null;
+          arguments.primitives = null;
+          arguments.attributes = null;
+          arguments.nonce = 0;
+          arguments.digest = null;
+          Log.d("exception",String.valueOf(arguments.entity.conferenceID));
+          message = bfcpClient.bfcp_build_message(arguments);
+
+          Log.d("Data_from_lib", String.valueOf(message));
+
+          if(message == null) {
+//            pthread_mutex_unlock(&count_mutex);
+              return null;
+          }
+
+
+          byte[] byteArr = new byte[1000];
+          try {
+              ByteArrayOutputStream bos = new ByteArrayOutputStream();
+              ObjectOutputStream oos = new ObjectOutputStream(bos);
+              oos.writeObject(message);
+              byteArr = bos.toByteArray();
+          } catch (IOException e) {
+              // handle exception
+          }
+
+          return byteArr;
+      }
 
     private PrintWriter output;
 
@@ -112,18 +167,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class Thread2 implements Runnable {
-        String message;
-//                = new bfcp_message();
+
 
         @Override
         public void run() {
             while (true) {
-                try {
-                    message = input.readLine();
-                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-                    Log.d("Unable to read",message);
-                }
+//                try {
+//                    message = input.readLine();
+//                } catch (IOException e) {
+////                    throw new RuntimeException(e);
+//                    Log.d("Unable to read",message);
+//                }
 
                 if (message != null) {
                     runOnUiThread(() -> tvMessages.append("server: " + message + " "));
@@ -137,32 +191,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class Thread3 implements Runnable {
-        private bfcp_message message;
+        private byte[] message1;
 
-        public Thread3(bfcp_message newmsg) {
-            message = newmsg;
+        public Thread3(byte[] newmsg) {
+            message1 = newmsg;
         }
-
-//        int message2 = message.getLength();
-
 
         @Override
         public void run() {
-//            output.write(String.valueOf(message));
+
             try {
-                objout.writeObject(message);
-                ByteArrayOutputStream boas = new ByteArrayOutputStream();
-                ObjectOutputStream ois = new ObjectOutputStream(boas);
-                ois.writeObject(message);
-//                dataOutputStream.write(message);
-//                dataOutputStream.flush();
-//                ois.flush();
-                //                objout.flush();
+                objout.write(message1);
+                Log.d("able to write", String.valueOf(objout));
             } catch (IOException e) {
 //                throw new RuntimeException(e);
                 Log.d("Unable to write", String.valueOf(objout));
-            }
 
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -174,5 +219,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
 }
 

@@ -16,7 +16,7 @@ public class JNIbfcpclass extends bfcp_entity{
         }
     }
 
-    public final native bfcp_message bfcp_build_message_Hello(bfcp_entity entity);
+    public final native bfcp_message bfcp_build_message_Hello(bfcp_arguments arguments);
 //    public final native bfcp_message bfcp_build_message_HelloAck(bfcp_entity entity,bfcp_supported_list primitives,bfcp_supported_list attributes);
     }
 

@@ -101,7 +101,7 @@ public class bfcp_client {
     }
     public  bfcp_message bfcp_build_message(bfcp_arguments arguments) {
         if(arguments.primitive == 11){
-            return myclass.bfcp_build_message_Hello(arguments.entity);
+            return myclass.bfcp_build_message_Hello(arguments);
             //return arguments;
         }
         else {
