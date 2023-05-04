@@ -9,7 +9,6 @@ import com.example.apt.JNIbfcp.JNIbfcpclass;
 import com.example.apt.JNIbfcp.bfcp_entity;
 import com.example.apt.JNIbfcp.bfcp_message;
 import com.example.apt.JNIbfcp.bfcp_participant_information;
-import com.example.apt.MainActivity;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -101,7 +100,7 @@ public class bfcp_client {
     }
     public  bfcp_message bfcp_build_message(bfcp_arguments arguments) {
         if(arguments.primitive == 11){
-            return myclass.bfcp_build_message_Hello(arguments);
+            return myclass.bfcp_build_message_Hello(arguments.entity);
             //return arguments;
         }
         else {

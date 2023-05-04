@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-      public byte[] messagedata(){
+      public bfcp_message messagedata(){
           bfcp_arguments arguments = new bfcp_arguments();
           bfcp_client bfcpClient = new bfcp_client();
 
@@ -124,18 +124,18 @@ public class MainActivity extends AppCompatActivity {
               return null;
           }
 
+//
+//          byte[] byteArr = new byte[1000];
+//          try {
+//              ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//              ObjectOutputStream oos = new ObjectOutputStream(bos);
+//              oos.writeObject(message);
+//              byteArr = bos.toByteArray();
+//          } catch (IOException e) {
+//              // handle exception
+//          }
 
-          byte[] byteArr = new byte[1000];
-          try {
-              ByteArrayOutputStream bos = new ByteArrayOutputStream();
-              ObjectOutputStream oos = new ObjectOutputStream(bos);
-              oos.writeObject(message);
-              byteArr = bos.toByteArray();
-          } catch (IOException e) {
-              // handle exception
-          }
-
-          return byteArr;
+          return message;
       }
 
     private PrintWriter output;
@@ -191,9 +191,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class Thread3 implements Runnable {
-        private byte[] message1;
+        private bfcp_message message1;
 
-        public Thread3(byte[] newmsg) {
+        public Thread3(bfcp_message newmsg) {
             message1 = newmsg;
         }
 
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
 
             try {
-                objout.write(message1);
+                objout.writeObject(message1);
                 Log.d("able to write", String.valueOf(objout));
             } catch (IOException e) {
 //                throw new RuntimeException(e);
