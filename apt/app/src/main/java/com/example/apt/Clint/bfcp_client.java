@@ -83,7 +83,7 @@ public class bfcp_client {
         Log.d("exception",String.valueOf(arguments.entity.conferenceID));
         message = bfcp_build_message(arguments);
 
-        Log.d("Data_from_lib", String.valueOf(message));
+//        Log.d("Data_from_lib", String.valueOf(message));
 
         if(message == null) {
 //            pthread_mutex_unlock(&count_mutex);

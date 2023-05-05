@@ -7,15 +7,19 @@ public class bfcp_message {
     //MsgPtr
     private long msgPtr;
 
-    bfcp_entity entity = new bfcp_entity();
+    private bfcp_entity entity;
+
+    public bfcp_message() {
+        entity = new bfcp_entity();
+    }
 
     public long getMsgPtr() {
         return msgPtr;
     }
+
     public void setMsgPtr(long msgPtr) {
         this.msgPtr = msgPtr;
     }
-    //MsgPtr
 
     public String getBuffer() {
         return buffer;
@@ -29,7 +33,7 @@ public class bfcp_message {
         return position;
     }
 
-    public void setPosition(short position) {
+    public void setPosition(int position) {
         this.position = position;
     }
 
@@ -37,20 +41,31 @@ public class bfcp_message {
         return length;
     }
 
-    public void setLength(short length) {
+    public void setLength(int length) {
         this.length = length;
     }
-    //    public void sethello() {
-//        //JNIbfcpclass.bfcp_build_message_Hello(this.bfcpEntity);
-//    }
-//    public bfcp_message gethello() {
-//       // return  JNIbfcpclass.bfcp_build_message_Hello(this.bfcpEntity);
-//        return null;
-//    }
 
-    public int getentity(int conf){
-        entity.conferenceID = conf;
-        return conf;
+    public int getConferenceID() {
+        return entity.conferenceID;
     }
 
+    public void setConferenceID(int conferenceID) {
+        entity.conferenceID = conferenceID;
+    }
+
+    public int getTransactionID() {
+        return entity.transactionID;
+    }
+
+    public void setTransactionID(int transactionID) {
+        entity.transactionID = transactionID;
+    }
+
+    public int getUserID() {
+        return entity.userID;
+    }
+
+    public void setUserID(int userID) {
+        entity.userID = userID;
+    }
 }
