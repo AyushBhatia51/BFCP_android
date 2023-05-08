@@ -2,6 +2,7 @@ package com.example.apt.Clint;
 
 import static android.system.Os.connect;
 
+
 import android.annotation.SuppressLint;
 import android.util.Log;
 
@@ -10,12 +11,13 @@ import com.example.apt.JNIbfcp.bfcp_entity;
 import com.example.apt.JNIbfcp.bfcp_message;
 import com.example.apt.JNIbfcp.bfcp_participant_information;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.*;
 import javax.net.ssl.*;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.locks.*;
 import java.io.IOException;
 import java.net.Socket;
@@ -39,27 +41,53 @@ public class bfcp_client {
     public JNIbfcpclass myclass = new JNIbfcpclass();
     private long conferenceID;
     private short userID;
-
     private static InetAddress serverAddress;
     private static int serverPort;
    public static bfcp_message message;
+   public bfcp_message msg;
+   public bfcp_message getmsg;
 
+    private static final String SERVER_IP = "192.168.8.138";
+    private static final int SERVER_PORT = 2345;
+
+    private OutputStream outputStream;
+    private InputStream inputStream;
+
+    public void BFCPClient() throws IOException {
+        socket = new Socket(SERVER_IP, SERVER_PORT);
+        outputStream = socket.getOutputStream();
+        inputStream = socket.getInputStream();
+    }
+    public void close() throws IOException {
+        socket.close();
+    }
+    public void sendMessage(bfcp_message message) throws IOException {
+        byte[] buffer = message.getBuffer();
+        outputStream.write(buffer);
+        outputStream.flush();
+    }
+    public bfcp_message receiveMessage() throws IOException {
+        byte[] headerBuffer = new byte[12];
+        int readBytes = 0;
+        while (readBytes < 12) {
+            readBytes += inputStream.read(headerBuffer, readBytes, 12 - readBytes);
+        }
+        int payloadLength = ByteBuffer.wrap(headerBuffer, 8, 4).getInt();
+        byte[] payloadBuffer = new byte[payloadLength - 12];
+        readBytes = 0;
+        while (readBytes < payloadBuffer.length) {
+            readBytes += inputStream.read(payloadBuffer, readBytes, payloadBuffer.length - readBytes);
+        }
+        byte[] messageBuffer = new byte[payloadLength];
+        System.arraycopy(headerBuffer, 0, messageBuffer, 0, 12);
+        System.arraycopy(payloadBuffer, 0, messageBuffer, 12, payloadBuffer.length);
+        return new bfcp_message(messageBuffer,new short[]{0,(short) messageBuffer.length});
+    }
     @SuppressLint("SuspiciousIndentation")
-    public int bfcp_hello_participant(bfcp_participant_information participant) {
-
-//        if(participant == null) {
-//            return -1;
-//        }
-
+    public int bfcp_hello_participant(bfcp_participant_information participant) throws IOException {
         int error;
         bfcp_arguments arguments = new bfcp_arguments();
-
-
-//        pthread_mutex_lock(&count_mutex);
-//
-        /* Prepare a new 'Hello' message */
         arguments.primitive = 11;
-//        arguments.primitive = null;
         bfcp_entity rrr = new bfcp_entity();
         rrr.conferenceID = 1001;
         rrr.transactionID = 0;
@@ -83,7 +111,11 @@ public class bfcp_client {
         Log.d("exception",String.valueOf(arguments.entity.conferenceID));
         message = bfcp_build_message(arguments);
 
-//        Log.d("Data_from_lib", String.valueOf(message));
+        Log.d("Data_from_lib", String.valueOf(message.getPosition()));
+        bfcp_client ff = new bfcp_client();
+        ff.sendMessage(message);
+        ff.getmsg = receiveMessage();
+        Log.d("back",String.valueOf(getmsg.getLength()));
 
         if(message == null) {
 //            pthread_mutex_unlock(&count_mutex);
@@ -91,94 +123,65 @@ public class bfcp_client {
         }
 //        pthread_mutex_unlock(&count_mutex);
         /* Send the message to the FCS */
-
-            error = send_message_to_server(message);
-            System.out.println(error);
+            error =1;
 //            BFCP_SEND_CHECK_ERRORS.toString();
 
         return error;
     }
     public  bfcp_message bfcp_build_message(bfcp_arguments arguments) {
         if(arguments.primitive == 11){
-            return myclass.bfcp_build_message_Hello(arguments.entity);
+            msg =  myclass.bfcp_build_message_Hello(arguments.entity);
             //return arguments;
+            if (msg != null) {
+                Log.d("DATA_lib", String.valueOf(msg.getPosition()));
+               // msg.setMsgPtr(msg.getBuffer(), msg.getPosition(), msg.getLength());
+            }
+            return msg;
         }
         else {
             return null;
         }
     }
 
+    /*public static int send_message_to_server(bfcp_message message) {
+
+        new Thread(() -> {
+            final String SERVER_IP = "192.168.8.138";
+//                SERVER_PORT = Integer.parseInt(etPort.getText().toString().trim());
+            final int SERVER_PORT = 2345;
+
+            try {
+                Log.d("helo","hello");
+                Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+                OutputStream outputStream = socket.getOutputStream();
+                InputStream inputStream = socket.getInputStream();
+
+                byte[] buffer = message.getBuffer();
+                outputStream.write(buffer);
+                Log.d("Socket connected","Success");
+                outputStream.flush();
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] responseBuffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(responseBuffer)) != -1){
+                    baos.write(responseBuffer, 0,bytesRead);
+                }
+                byte[] responseBytes = baos.toByteArray();
+                message.setBuffer(responseBytes);
+                message.setMsgPtr(responseBytes, message.getPosition(), message.getLength());
+                Log.d("data",String.valueOf(message.getPosition()));
+                outputStream.close();
+                inputStream.close();
+                socket.close();
+            }catch (Exception e){
+                Log.d("exception",String.valueOf(e));
+            }
+        }).start();
+        return 0;
+    }*/
     public static Object bfcp_new_entity(Object o, Object base_transactionID, Object o1) {
         return null;
-    }
-//    public static  bfcp_arguments
-//    bfcp_new_arguments() {
-//        return null;
-//    }
-   public static int send_message_to_server(bfcp_message message) {
-       PrintWriter output;
-       BufferedReader input;
-       try{
-            socket = new Socket("192.168.8.138", 2345);
-            output = new PrintWriter(socket.getOutputStream());
-            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            output.write(String.valueOf(message));
-            Log.d("Socket connected","Success");
-            output.flush();
-        }catch (Exception e){
-            Log.d("no",String.valueOf(e));
-        }
-        return 0;
-    }
- bfcp_message bfcpMessage = new bfcp_message();
-
-    public static void connect() throws IOException {
-        bfcp_transport = BFCP_OVER_TCP; // or BFCP_OVER_TLS
-        if (bfcp_transport == BFCP_OVER_TLS) {
-            /* Initialize TLS-related stuff */
-            try {
-                context = SSLContext.getInstance("TLSv1.2");
-                context.init(null, null, null);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
-            }
-        }
-//        try {
-//            SocketAddress serverSocketAddress = new InetSocketAddress(serverAddress, serverPort);
-//            server_sock = new Socket();
-//            server_sock.connect(serverSocketAddress, 5000); // 5 second timeout
-//        }catch (Exception e){
-//            Log.d("exception",String.valueOf(e));
-//        }
-//        if(bfcp_transport == BFCP_OVER_TLS) {
-//            /* Once the connection has been established, make the SSL Handshake */
-//            try {
-//                session = (SSLSocket) context.getSocketFactory().createSocket(server_sock, serverAddress.getHostAddress(), serverPort, true);
-//                session.startHandshake();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return;
-//            }
-//        }
-//
-//        // handle incoming messages on a separate thread
-//        thread = new Thread(new Runnable() {
-//            public void run() {
-//                try {
-//                    InputStream input = session.getInputStream(); // or server_sock.getInputStream()
-//                    while (true) {
-//                        // read and handle incoming messages
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        thread.start();
-//    }
-
-
     }
 
 }

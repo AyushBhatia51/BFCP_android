@@ -1,71 +1,33 @@
 package com.example.apt.JNIbfcp;
 
 public class bfcp_message {
-    private String buffer;
-    private int position;
-    private int length;
-    //MsgPtr
-    private long msgPtr;
+    private byte[] buffer;
+    private short position;
+    private short length;
 
-    private bfcp_entity entity;
-
-    public bfcp_message() {
-        entity = new bfcp_entity();
+    public bfcp_message(byte[] buffer, short[] posAndLen) {
+        this.buffer = buffer;
+        this.position = posAndLen[0];
+        this.length = posAndLen[1];
     }
 
-    public long getMsgPtr() {
-        return msgPtr;
-    }
-
-    public void setMsgPtr(long msgPtr) {
-        this.msgPtr = msgPtr;
-    }
-
-    public String getBuffer() {
+    public byte[] getBuffer() {
         return buffer;
     }
 
-    public void setBuffer(String buffer) {
-        this.buffer = buffer;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
+    public void setPosition(short position) {
         this.position = position;
     }
 
-    public int getLength() {
-        return length;
+    public short getPosition() {
+        return position;
     }
 
-    public void setLength(int length) {
+    public void setLength(short length) {
         this.length = length;
     }
 
-    public int getConferenceID() {
-        return entity.conferenceID;
-    }
-
-    public void setConferenceID(int conferenceID) {
-        entity.conferenceID = conferenceID;
-    }
-
-    public int getTransactionID() {
-        return entity.transactionID;
-    }
-
-    public void setTransactionID(int transactionID) {
-        entity.transactionID = transactionID;
-    }
-
-    public int getUserID() {
-        return entity.userID;
-    }
-
-    public void setUserID(int userID) {
-        entity.userID = userID;
+    public short getLength() {
+        return length;
     }
 }

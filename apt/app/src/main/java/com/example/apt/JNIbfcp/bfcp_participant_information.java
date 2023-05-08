@@ -22,4 +22,6 @@ public class bfcp_participant_information {
         return floors_participant;
     }
 
+    public native void recieveCharBuffer(byte[] buffer);
+
 }
