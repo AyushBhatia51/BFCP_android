@@ -41,11 +41,17 @@ public class MainActivity extends AppCompatActivity {
         initialpart.bfcp_initialize_bfcp_participant(3001, 1001, "192.168.8,138", 2345, bfcpReceivedMessageHandler, 0);
         Log.e("parti", String.valueOf(initialpart.getConferenceID()));
         bfcp_client newcli = new bfcp_client();
-        try {
-            error = newcli.bfcp_hello_participant(initialpart);
-        }catch (IOException e){
-           error =1;
-        }
+            new Thread(() -> {
+                try {
+                newcli.BFCPClient();
+                bfM = newcli.bfcp_hello_participant(initialpart);
+                newcli.sendMessage(bfM);
+                bfM = newcli.receiveMessage();
+                Log.d("bfm", String.valueOf(bfM.getLength()));
+                }catch (IOException e){
+                    error =1;
+                }
+            }).start();
         Log.d("error", "Error" + error);
         etIP = findViewById(R.id.etIP);
         etPort = findViewById(R.id.etPort);
@@ -59,10 +65,10 @@ public class MainActivity extends AppCompatActivity {
         });
         }
 
-public static bfcp_message received_message_from_server(){
-        bfcp_message message1 = null;
-    return message1;
-
-}
+//public static bfcp_message received_message_from_server(){
+//        bfcp_message message1 = null;
+//    return message1;
+//
+//}
 }
 

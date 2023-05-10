@@ -1,8 +1,5 @@
 package com.example.apt.Clint;
 
-import static android.system.Os.connect;
-
-
 import android.annotation.SuppressLint;
 import android.util.Log;
 
@@ -10,6 +7,7 @@ import com.example.apt.JNIbfcp.JNIbfcpclass;
 import com.example.apt.JNIbfcp.bfcp_entity;
 import com.example.apt.JNIbfcp.bfcp_message;
 import com.example.apt.JNIbfcp.bfcp_participant_information;
+import com.example.apt.MainActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -54,15 +52,20 @@ public class bfcp_client {
     private InputStream inputStream;
 
     public void BFCPClient() throws IOException {
+
         socket = new Socket(SERVER_IP, SERVER_PORT);
         outputStream = socket.getOutputStream();
         inputStream = socket.getInputStream();
+
     }
     public void close() throws IOException {
         socket.close();
     }
     public void sendMessage(bfcp_message message) throws IOException {
         byte[] buffer = message.getBuffer();
+        if(message != null){
+            Log.d("nuill","null data");
+        }
         outputStream.write(buffer);
         outputStream.flush();
     }
@@ -71,6 +74,7 @@ public class bfcp_client {
         int readBytes = 0;
         while (readBytes < 12) {
             readBytes += inputStream.read(headerBuffer, readBytes, 12 - readBytes);
+            Log.d("rec",String.valueOf(readBytes));
         }
         int payloadLength = ByteBuffer.wrap(headerBuffer, 8, 4).getInt();
         byte[] payloadBuffer = new byte[payloadLength - 12];
@@ -84,7 +88,7 @@ public class bfcp_client {
         return new bfcp_message(messageBuffer,new short[]{0,(short) messageBuffer.length});
     }
     @SuppressLint("SuspiciousIndentation")
-    public int bfcp_hello_participant(bfcp_participant_information participant) throws IOException {
+    public bfcp_message bfcp_hello_participant(bfcp_participant_information participant) throws IOException {
         int error;
         bfcp_arguments arguments = new bfcp_arguments();
         arguments.primitive = 11;
@@ -112,21 +116,21 @@ public class bfcp_client {
         message = bfcp_build_message(arguments);
 
         Log.d("Data_from_lib", String.valueOf(message.getPosition()));
-        bfcp_client ff = new bfcp_client();
-        ff.sendMessage(message);
-        ff.getmsg = receiveMessage();
-        Log.d("back",String.valueOf(getmsg.getLength()));
+
+        //sendMessage(message);
+       // getmsg = receiveMessage();
+        //Log.d("back",String.valueOf(getmsg.getLength()));
 
         if(message == null) {
 //            pthread_mutex_unlock(&count_mutex);
-            return -1;
+            return null;
         }
 //        pthread_mutex_unlock(&count_mutex);
         /* Send the message to the FCS */
             error =1;
 //            BFCP_SEND_CHECK_ERRORS.toString();
 
-        return error;
+        return message;
     }
     public  bfcp_message bfcp_build_message(bfcp_arguments arguments) {
         if(arguments.primitive == 11){
