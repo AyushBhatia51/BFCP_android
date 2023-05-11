@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }).start());
-        btnSend.setOnClickListener(v -> new Thread(() -> {
+        /*btnSend.setOnClickListener(v -> new Thread(() -> {
             while (socketManager.isConnected()) {
                 try {
                     byte[] buffer = socketManager.receiveMessage();
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start());
-
+*/
 
         Log.d("error", "Error" + error);
         etIP = findViewById(R.id.etIP);

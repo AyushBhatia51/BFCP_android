@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class SocketAsync extends AsyncTask<Void, Void, Void> {
     private static final String TAG = "SocketAsync";
@@ -16,15 +17,20 @@ public class SocketAsync extends AsyncTask<Void, Void, Void> {
     private final String serverIp;
     private final int serverPort;
 
+    private MessageListener listener;
     public SocketAsync(String serverIp, int serverPort) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
     }
-
+    public void setMessageListener(MessageListener listener) {
+        this.listener = listener;
+    }
     @Override
     protected Void doInBackground(Void... voids) {
         try {
             socket = new Socket(serverIp, serverPort);
+            Thread recvThread = new Thread(new ReceiveThread());
+            recvThread.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +53,25 @@ public class SocketAsync extends AsyncTask<Void, Void, Void> {
     public boolean isSocketConnected() {
         return socket != null && socket.isConnected();
     }
-
-    public byte[] receiveMessage() throws IOException {
+    private class ReceiveThread implements Runnable {
+        @Override
+        public void run() {
+            try {
+                InputStream inputStream = socket.getInputStream();
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    if (listener != null) {
+                        byte[] message = Arrays.copyOfRange(buffer, 0, bytesRead);
+                        listener.onMessageReceived(message);
+                    }
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Error receiving message", e);
+            }
+        }
+    }
+   /* public byte[] receiveMessage() throws IOException {
         if (socket == null || socket.isClosed()) {
             throw new IOException("Socket is not connected");
         }
@@ -73,12 +96,15 @@ public class SocketAsync extends AsyncTask<Void, Void, Void> {
         Log.d(TAG, "Received message: " + new String(message));
 
         return message;
-    }
+    }*/
 
     public void closeSocket() throws IOException {
         if (socket != null && !socket.isClosed()) {
             socket.close();
             socket = null;
         }
+    }
+    public interface MessageListener {
+        void onMessageReceived(byte[] message);
     }
 }

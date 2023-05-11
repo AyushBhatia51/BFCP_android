@@ -1,16 +1,20 @@
 package com.example.apt.Clint;
 
+import android.util.Log;
+
 import java.io.IOException;
 
-public class SocketManager {
+public class SocketManager implements SocketAsync.MessageListener{
     private SocketAsync socketAsync;
     private String serverIp;
     private int serverPort;
+    private SocketAsync.MessageListener messageListener;
 
     public SocketManager(String serverIp, int serverPort) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.socketAsync = new SocketAsync(serverIp, serverPort);
+        socketAsync.setMessageListener(this);
     }
 
     public void connect() {
@@ -29,7 +33,11 @@ public class SocketManager {
         socketAsync.sendMessage(message);
     }
 
-    public byte[] receiveMessage() throws IOException {
-        return socketAsync.receiveMessage();
+    public void setMessageListener(SocketAsync.MessageListener listener) {
+        this.messageListener = listener;
+    }
+    @Override
+    public void onMessageReceived(byte[] message) {
+        Log.d("tag","messagerecieved");
     }
 }
