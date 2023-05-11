@@ -18,6 +18,8 @@ import java.net.*;
 import javax.net.ssl.*;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.*;
 import java.io.IOException;
 import java.net.Socket;
@@ -53,7 +55,7 @@ public class bfcp_client {
     private OutputStream outputStream;
     private InputStream inputStream;
 
-    public void BFCPClient() throws IOException {
+/*    public void BFCPClient() throws IOException {
 
         socket = new Socket(SERVER_IP, SERVER_PORT);
         outputStream = socket.getOutputStream();
@@ -61,11 +63,11 @@ public class bfcp_client {
         Log.d("server",String.valueOf(socket.getReceiveBufferSize()));
 
 
-    }
-    public void close() throws IOException {
+    }*/
+    /*public void close() throws IOException {
         socket.close();
-    }
-    public void sendMessage(bfcp_message message) throws IOException {
+    }*/
+    public void sendMessage(bfcp_message message, OutputStream outputStream) throws IOException {
         byte[] buffer = message.getBuffer();
         if(message != null){
             Log.d("nuill","null data");
@@ -74,7 +76,41 @@ public class bfcp_client {
         Log.d("ips",String.valueOf(inputStream.available()));
         outputStream.flush();
     }
-    public bfcp_message receiveMessage() throws IOException {
+    public class InputStreamThread extends Thread {
+        private InputStream inputStream;
+        private BlockingQueue<byte[]> messageQueue;
+        private volatile boolean stopFlag;
+
+        public InputStreamThread(InputStream inputStream, BlockingQueue<byte[]> messageQueue) {
+            this.inputStream = inputStream;
+            this.messageQueue = messageQueue;
+            this.stopFlag = false;
+        }
+
+        public void stopThread() {
+            this.stopFlag = true;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (!stopFlag) {
+                    byte[] buffer = new byte[1024];
+                    int bytesRead = inputStream.read(buffer);
+                    if (bytesRead == -1) {
+                        // end of stream
+                        break;
+                    }
+                    byte[] message = Arrays.copyOfRange(buffer, 0, bytesRead);
+                    messageQueue.offer(message);
+                }
+            } catch (IOException e) {
+                // handle exception
+            }
+        }
+    }
+
+    public bfcp_message receiveMessage(InputStream inputStream) throws IOException {
 
         byte[] headerBuffer = new byte[12];
         char[] buffer1 = new char[socket.getReceiveBufferSize()];
