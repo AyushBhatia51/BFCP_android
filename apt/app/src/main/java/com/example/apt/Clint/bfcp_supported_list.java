@@ -1,10 +1,10 @@
 package com.example.apt.Clint;
 
 public class bfcp_supported_list {
-    public int element;                     // Element (Attribute/Primitive)
+    public short element;                     // Element (Attribute/Primitive)
     public bfcp_supported_list next;        // Pointer to next supported element instance
 
-    public bfcp_supported_list(int element, bfcp_supported_list next) {
+    public bfcp_supported_list(short element, bfcp_supported_list next) {
         this.element = element;
         this.next = next;
     }

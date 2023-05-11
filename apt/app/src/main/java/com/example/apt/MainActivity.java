@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 newcli.BFCPClient();
                 bfM = newcli.bfcp_hello_participant(initialpart);
                 newcli.sendMessage(bfM);
-                bfM = newcli.receiveMessage();
+                newcli.receiveMessage();
                 Log.d("bfm", String.valueOf(bfM.getLength()));
                 }catch (IOException e){
                     error =1;

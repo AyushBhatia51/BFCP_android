@@ -10,7 +10,9 @@ import com.example.apt.JNIbfcp.bfcp_participant_information;
 import com.example.apt.MainActivity;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
 import javax.net.ssl.*;
@@ -56,6 +58,8 @@ public class bfcp_client {
         socket = new Socket(SERVER_IP, SERVER_PORT);
         outputStream = socket.getOutputStream();
         inputStream = socket.getInputStream();
+        Log.d("server",String.valueOf(socket.getReceiveBufferSize()));
+
 
     }
     public void close() throws IOException {
@@ -67,14 +71,26 @@ public class bfcp_client {
             Log.d("nuill","null data");
         }
         outputStream.write(buffer);
+        Log.d("ips",String.valueOf(inputStream.available()));
         outputStream.flush();
     }
     public bfcp_message receiveMessage() throws IOException {
+
         byte[] headerBuffer = new byte[12];
+        char[] buffer1 = new char[socket.getReceiveBufferSize()];
+        headerBuffer[0] = 1;
+//        Log.d("input1",String.valueOf(headerBuffer[0]));
+        InputStreamReader rr = new InputStreamReader(inputStream);
+
+        //inputStream.read(headerBuffer);
+        Log.d("input1",String.valueOf(rr.read()));
         int readBytes = 0;
+        inputStream.read(headerBuffer, readBytes, 12 - readBytes);
+        Log.d("input",String.valueOf(headerBuffer[0]));
         while (readBytes < 12) {
+
             readBytes += inputStream.read(headerBuffer, readBytes, 12 - readBytes);
-            Log.d("rec",String.valueOf(readBytes));
+
         }
         int payloadLength = ByteBuffer.wrap(headerBuffer, 8, 4).getInt();
         byte[] payloadBuffer = new byte[payloadLength - 12];
@@ -97,17 +113,17 @@ public class bfcp_client {
         rrr.transactionID = 0;
         rrr.userID = 3001;
         arguments.entity = rrr;
-        arguments.fID = 2001;
+        arguments.fID = null;
         arguments.frqID = 0;
         arguments.bID = 0;
         arguments.priority = 0;
         arguments.frqInfo = null;
         arguments.beneficiary = null;
         arguments.rs = null;
-        arguments.pInfo = null;
-        arguments.sInfo = null;
+        arguments.pInfo = 0;
+        arguments.sInfo = 0;
         arguments.error = null;
-        arguments.eInfo = null;
+        arguments.eInfo = 0;
         arguments.primitives = null;
         arguments.attributes = null;
         arguments.nonce = 0;

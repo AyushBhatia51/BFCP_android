@@ -1,11 +1,11 @@
 package com.example.apt.Clint;
 
 public class bfcp_user_information {
-    public int ID;         // For the INFORMATION-HEADER
-    public String display; // USER-DISPLAY-NAME, optional
-    public String uri;     // USER-URI, optional
+    public short ID;         // For the INFORMATION-HEADER
+    public char display; // USER-DISPLAY-NAME, optional
+    public char uri;     // USER-URI, optional
 
-    public bfcp_user_information(int ID, String display, String uri) {
+    public bfcp_user_information(short ID, char display, char uri) {
         this.ID = ID;
         this.display = display;
         this.uri = uri;

@@ -1,10 +1,10 @@
 package com.example.apt.Clint;
 
 public class bfcp_digest {
-    public int algorithm;     // (currently UNUSED)
-    public String text;       // (currently UNUSED)
+    public short algorithm;     // (currently UNUSED)
+    public char text;       // (currently UNUSED)
 
-    public bfcp_digest(int algorithm, String text) {
+    public bfcp_digest(short algorithm, char text) {
         this.algorithm = algorithm;
         this.text = text;
     }
