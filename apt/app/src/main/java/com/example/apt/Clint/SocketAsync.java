@@ -3,12 +3,16 @@ package com.example.apt.Clint;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class SocketAsync extends AsyncTask<Void, Void, Void> {
@@ -16,6 +20,7 @@ public class SocketAsync extends AsyncTask<Void, Void, Void> {
     private Socket socket;
     private final String serverIp;
     private final int serverPort;
+    private InputStream inputStream;
 
     private MessageListener listener;
     public SocketAsync(String serverIp, int serverPort) {
@@ -29,6 +34,7 @@ public class SocketAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         try {
             socket = new Socket(serverIp, serverPort);
+
             Thread recvThread = new Thread(new ReceiveThread());
             recvThread.start();
         } catch (IOException e) {
@@ -41,14 +47,39 @@ public class SocketAsync extends AsyncTask<Void, Void, Void> {
         if (socket == null || socket.isClosed() || getStatus() != Status.FINISHED) {
             throw new IOException("Socket is not connected");
         }
-
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-
+        int total = 0;
+        int bytesLeft = message.length;
+        OutputStream outputStream = socket.getOutputStream();
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+        //DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+        String utf8String = new String(message, StandardCharsets.UTF_8);
         //outputStream.writeInt(message.length);
-        outputStream.write(message);
-        outputStream.flush();
-
+        while (bytesLeft > 0) {
+            bufferedOutputStream.write(message, total, bytesLeft);
+            bufferedOutputStream.flush();
+            total += bytesLeft;
+            bytesLeft -= bytesLeft;
+        }
+        //outputStream.write(message);
+       bufferedOutputStream.close();
         Log.d(TAG, "Sent message: " + new String(message));
+       /* byte[] commonHeader = new byte[12];
+        int bytesRead = inputStream.read(commonHeader);
+        if (bytesRead == -1) {
+            Log.d(TAG, "error in stream or end of stream ");
+            // Handle end-of-stream condition or error
+        } else if (bytesRead < 12) {
+            Log.d(TAG, "Incomplete stream");
+        } else {
+            Log.d(TAG, "Success data");
+            // Process the received data
+            // ...
+        }*/
+
+
+
+
+
     }
     public boolean isSocketConnected() {
         return socket != null && socket.isConnected();
@@ -57,46 +88,35 @@ public class SocketAsync extends AsyncTask<Void, Void, Void> {
         @Override
         public void run() {
             try {
-                InputStream inputStream = socket.getInputStream();
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    if (listener != null) {
-                        byte[] message = Arrays.copyOfRange(buffer, 0, bytesRead);
-                        listener.onMessageReceived(message);
+                byte[] commonHeader = new byte[12];
+                
+                inputStream = socket.getInputStream();
+                BufferedInputStream bis = new BufferedInputStream(inputStream);
+               // DataInputStream is = new DataInputStream(inputStream);
+                while (true) {
+                   // int messageLength = bis.readInt();
+                    //byte[] buffer = new byte[messageLength];
+                   int bytesRead = bis.read(commonHeader);
+                    if (bytesRead == -1) {
+                        Log.d(TAG, "error in stream or end of stream ");
+                        break;
                     }
+                    else if (bytesRead < 12) {
+                        Log.d(TAG, "Incomplete stream");
+                    } else {
+                        Log.d(TAG, "Success data");
+                    }
+                    /*if (listener != null) {
+                        byte[] message = Arrays.copyOf(buffer, bytesRead);
+                        listener.onMessageReceived(message);
+                    }*/
                 }
-            } catch (IOException e) {
+            } catch (RuntimeException | IOException e) {
                 Log.e(TAG, "Error receiving message", e);
             }
         }
     }
-   /* public byte[] receiveMessage() throws IOException {
-        if (socket == null || socket.isClosed()) {
-            throw new IOException("Socket is not connected");
-        }
-        Log.d(TAG, String.valueOf("messageLength"));
 
-        InputStream inputStream = socket.getInputStream();
-        Log.d(TAG, String.valueOf(inputStream.available()));
-        byte[] buffer = new byte[1024];
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-        //DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-        int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            byteArrayOutputStream.write(buffer, 0, bytesRead);
-
-            if (inputStream.available() == 0) {
-                break;
-            }
-        }
-        byte[] message = byteArrayOutputStream.toByteArray();
-
-        Log.d(TAG, "Received message: " + new String(message));
-
-        return message;
-    }*/
 
     public void closeSocket() throws IOException {
         if (socket != null && !socket.isClosed()) {
