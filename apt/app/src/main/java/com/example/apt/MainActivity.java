@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 //    private SocketManager socketManager;
     private bfcp_message bfM;
     PrintWriter writer;
-    BufferedReader reader;
+    InputStream reader;
     int error;
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("connected", "connected: ");
                 }
                 writer =  new PrintWriter(socket.getOutputStream(), true);
-                reader =  new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                reader = socket.getInputStream();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -155,14 +155,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class SendMessageToServerTask extends AsyncTask<String, Void, String> {
+    private class SendMessageToServerTask extends AsyncTask<byte[], Void, byte[]> {
 
         @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         @Override
-        protected String doInBackground(String... messages) {
+        protected byte[] doInBackground(byte[]... messages) {
             if (writer != null) {
                 try {
-                    String messageBytes = messages[0]; // Access the first element of the messages array
+                    byte[] messageBytes = messages[0]; // Access the first element of the messages array
                     writer.println(messageBytes);
                     Log.d(TAG, "Sent message: " + new String(messageBytes));
 //                    byte[] buffer = new byte[1024];
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 //                        data = Arrays.copyOf(buffer, bytesRead);
 
 //                    }
-                    String data = reader.readLine();
+                    byte[] data = reader.readAllBytes();
 
                     return data;
                 } catch (IOException e) {
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String serverResponse) {
+        protected void onPostExecute(byte[] serverResponse) {
             if (serverResponse != null) {
 //                for(int i = 0 ; i<serverResponse.length; i++) {
                     Log.d("Server acknowledgment: ", "onPostExecute: " + serverResponse);
