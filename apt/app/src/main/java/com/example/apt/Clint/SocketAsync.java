@@ -96,8 +96,10 @@ public class SocketAsync {
             }
             try{
                 byte[] commonHeaders = new byte[12];
+                int bytt = iss.read();
+                Log.d("bytt",String.valueOf(bytt));
                 int bytesRead = iss.read(commonHeaders,0,12);
-
+                Log.d("bytt",String.valueOf(bytesRead));
                 if (bytesRead == 12) {
                     int messageLength = extractMessageLength(commonHeaders);
                     byte[] message = new byte[messageLength];
@@ -130,7 +132,9 @@ public class SocketAsync {
         }
 
         private int extractMessageLength(byte[] commonHeaders) {
-            return ByteBuffer.wrap(commonHeaders, 8, 4).getInt();
+            int packetlen = ByteBuffer.wrap(commonHeaders, 8, 4).getInt();
+            Log.d(TAG, String.valueOf(packetlen));
+            return packetlen;
         }
     }
 
