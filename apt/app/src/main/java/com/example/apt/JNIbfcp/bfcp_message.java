@@ -1,6 +1,8 @@
 package com.example.apt.JNIbfcp;
 
-public class bfcp_message {
+import java.io.Serializable;
+
+public class bfcp_message implements Serializable {
     private byte[] buffer;
     private short position;
     private short length;

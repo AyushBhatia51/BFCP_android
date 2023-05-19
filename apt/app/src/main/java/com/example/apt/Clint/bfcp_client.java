@@ -146,7 +146,7 @@ public class bfcp_client {
         arguments.primitive = 11;
         bfcp_entity rrr = new bfcp_entity();
         rrr.conferenceID = 1001;
-        rrr.transactionID = 0;
+        rrr.transactionID = 1;
         rrr.userID = 3001;
         arguments.entity = rrr;
         arguments.fID = null;

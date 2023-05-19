@@ -16,6 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Apt"
         tools:targetApi="31">
+        <service
+            android:name=".Clint.backgroundService"
+            android:enabled="true"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
