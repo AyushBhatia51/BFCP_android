@@ -99,32 +99,47 @@ public class SocketAsync {
                 int bytt = iss.read();
                 Log.d("bytt",String.valueOf(bytt));
                 int bytesRead = iss.read(commonHeaders,0,12);
-                Log.d("bytt",String.valueOf(bytesRead));
-                if (bytesRead == 12) {
-                    int messageLength = extractMessageLength(commonHeaders);
-                    byte[] message = new byte[messageLength];
-                    int totalBytesRead = 0;
-                    while (totalBytesRead < messageLength) {
-                        int remainingBytes = messageLength - totalBytesRead;
-                        bytesRead = iss.read(message, totalBytesRead, remainingBytes);
-
-                        if (bytesRead == -1) {
-                            break;
-                        }
-
-                        totalBytesRead += bytesRead;
+                bfcp_message newmsg = new bfcp_message(commonHeaders,new short[] { (short) 0, (short) bytesRead });
+                int in_length = bfcp_get_length(newmsg) + 12;
+                int total = in_length - 12;
+                byte[] buffer = new byte[total];
+                int missing = total;
+                while (true) {
+                    if (missing <= 0) {
+                        break;
                     }
-                    if (totalBytesRead == messageLength) {
-                        Log.d("full message", "full message");
-                        if (listener != null) {
-                            listener.onMessageReceived(message);
-                        }
-                    } else {
-                        Log.e(TAG, "Incomplete message received");
+                    bytesRead = iss.read(buffer, total - missing, missing);
+                    if (bytesRead == -1) {
+                        // There was an error while receiving the message
+                        buffer = null;
+                        break;
                     }
-                } else {
-                    Log.e(TAG, "Incomplete common headers received");
+                    missing -= bytesRead;
                 }
+                if (total < 0) {
+                    // The reported length is corrupted
+                    commonHeaders = null;
+                    Log.d(TAG, "Reported memory is corrupt");
+                   // return null;
+                }
+                if (total == 0) {
+                    // The whole message has already been received, there's no payload
+                    commonHeaders = null;
+                    Log.d(TAG, "Entire message received");
+                   // return newmsg;
+                }
+                commonHeaders = Arrays.copyOf(commonHeaders, in_length);
+
+                System.arraycopy(buffer, 0, commonHeaders, 12, total);
+
+                bfcp_message message = new bfcp_message(commonHeaders, new short[] { (short) 0, (short) in_length });
+
+// Clean up allocated buffers
+                buffer = null;
+                commonHeaders = null;
+
+                Log.d("bytt",String.valueOf(message));
+
             } catch (IOException e) {
                 Log.e(TAG, "Error receiving message", e);
             }
@@ -135,6 +150,21 @@ public class SocketAsync {
             int packetlen = ByteBuffer.wrap(commonHeaders, 8, 4).getInt();
             Log.d(TAG, String.valueOf(packetlen));
             return packetlen;
+        }
+
+        private short bfcp_get_length(bfcp_message message) {
+            if (message == null) {
+                return 0;
+            }
+            int ch32;       // 32 bits
+            short length;   // 16 bits
+            byte[] buffer = message.getBuffer();
+            ByteBuffer byteBuffer = ByteBuffer.wrap(buffer, 0, 4);
+            ch32 = byteBuffer.getInt();
+            ch32 = Integer.reverseBytes(ch32);
+            length = (short) (ch32 & 0x0000FFFF);
+            Log.d(TAG, String.valueOf(length));
+            return length;
         }
     }
 

@@ -137,7 +137,8 @@ public class bfcp_client {
         byte[] messageBuffer = new byte[payloadLength];
         System.arraycopy(headerBuffer, 0, messageBuffer, 0, 12);
         System.arraycopy(payloadBuffer, 0, messageBuffer, 12, payloadBuffer.length);
-        return new bfcp_message(messageBuffer,new short[]{0,(short) messageBuffer.length});
+       return new bfcp_message(messageBuffer,new short[]{0,(short) messageBuffer.length});
+        //return new bfcp_message(messageBuffer, (short) messageBuffer.length);
     }
     @SuppressLint("SuspiciousIndentation")
     public bfcp_message bfcp_hello_participant(bfcp_participant_information participant) throws IOException {
