@@ -33,13 +33,13 @@ public class MainActivity extends AppCompatActivity {
     TextView tvMessages;
     EditText etMessage;
     Button btnSend,btnConnect;
-    String SERVER_IP ="192.168.8.130";
+    String SERVER_IP ="192.168.8.138";
     bfcp_message message;
     Socket socket;
-    int SERVER_PORT =1234;
+    int SERVER_PORT =2345;
 //    private SocketManager socketManager;
     private bfcp_message bfM;
-    PrintWriter writer;
+    DataOutputStream writer;
     InputStream reader;
     int error;
     @SuppressLint("MissingInflatedId")
@@ -77,11 +77,14 @@ public class MainActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //                    bfM = newcli.bfcp_hello_participant(initialpart);
-                String message = etMessage.getText().toString();
-                SendMessageToServerTask sendTask = new SendMessageToServerTask();
-                sendTask.execute(message);
-
+                try {
+                    bfM = newcli.bfcp_hello_participant(initialpart);
+                    SendMessageToServerTask sendTask = new SendMessageToServerTask();
+                    sendTask.execute(bfM.getBuffer());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+//                String message = etMessage.getText().toString();
             }
         });
 
@@ -135,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 if(socket.isConnected()){
                     Log.d("connected", "connected: ");
                 }
-                writer =  new PrintWriter(socket.getOutputStream(), true);
+                writer =  new DataOutputStream(socket.getOutputStream());
                 reader = socket.getInputStream();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -163,7 +166,8 @@ public class MainActivity extends AppCompatActivity {
             if (writer != null) {
                 try {
                     byte[] messageBytes = messages[0]; // Access the first element of the messages array
-                    writer.println(messageBytes);
+                    writer.write(messageBytes);
+                    writer.flush();
                     Log.d(TAG, "Sent message: " + new String(messageBytes));
 //                    byte[] buffer = new byte[1024];
 //                    byte[] data = new byte[1024];
@@ -173,9 +177,12 @@ public class MainActivity extends AppCompatActivity {
 //                        data = Arrays.copyOf(buffer, bytesRead);
 
 //                    }
-                    byte[] data = reader.readAllBytes();
+                    return reader.readAllBytes();
 
-                    return data;
+
+//                    if (bytesRead > 0) {
+//                        return Arrays.copyOf(response, bytesRead);
+//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -185,11 +192,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(byte[] serverResponse) {
+            super.onPostExecute(serverResponse);
             if (serverResponse != null) {
-//                for(int i = 0 ; i<serverResponse.length; i++) {
-                    Log.d("Server acknowledgment: ", "onPostExecute: " + serverResponse);
-//                }
-            } else {
+                String responseString = new String(serverResponse);
+                Log.d("Server acknowledgment: ", "onPostExecute: " + responseString);
+            }
+            else {
                 Log.d("Server acknowledgment: ","Error communicating with the server.");
             }
         }
