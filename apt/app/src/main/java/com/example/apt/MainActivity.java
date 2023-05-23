@@ -3,9 +3,9 @@ package com.example.apt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.apt.Clint.SocketAsync;
-import com.example.apt.Clint.SocketManager;
 import com.example.apt.Clint.StreamInitializer;
 import com.example.apt.Clint.bfcp_client;
+import com.example.apt.Clint.bfcp_received_message;
 import com.example.apt.JNIbfcp.*;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -32,13 +32,14 @@ public class MainActivity extends AppCompatActivity {
     EditText etIP, etPort;
     TextView tvMessages;
     EditText etMessage;
-    Button btnSend;
+    Button btnSend, parse;
     String SERVER_IP ="192.168.8.138";
     bfcp_message message;
     Socket socket;
     int SERVER_PORT =2345;
     private SocketAsync socketAsync;
     private bfcp_message bfM;
+    private bfcp_received_message recmsg;
     DataOutputStream dataOutputStream;
     ObjectOutputStream objout;
     int error;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         }*/
         Button btnConnect = findViewById(R.id.btnConnect);
         btnSend = findViewById(R.id.btnSend);
+        parse = findViewById(R.id.parse);
         //socketManager.connect();
         bfcp_participant_information initialpart = new bfcp_participant_information();
         bfcp_received_message_handler bfcpReceivedMessageHandler = new bfcp_received_message_handler();
@@ -64,7 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 socketAsync = new SocketAsync(SERVER_IP, SERVER_PORT);
                 socketAsync.setMessageListener(message -> {
                     runOnUiThread(() -> {
-                        Log.d("main", "received message");
+                        bfM = message;
+                        Log.d("byt",String.valueOf(message));
+                        //JNIbfcpclass jnIbfcpclass = new JNIbfcpclass();
+
                     });
                 });
                 runOnUiThread(() -> {
@@ -74,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("Main", "Socket is already connected");
             }
         });
+
+
 
         btnSend.setOnClickListener(v -> {
             if (socketAsync != null && socketAsync.isSocketConnected()) {
@@ -94,11 +101,19 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }).start();
+
             } else {
                 Log.e("main", "Socket is not connected");
             }
         });
-        /*btnConnect.setOnClickListener(v -> {
+
+         parse.setOnClickListener(v -> {
+             Log.d("rec",String.valueOf(bfM.getLength()));
+             recmsg = newcli.bfcp_parse_message(bfM);
+             Log.d("main", String.valueOf(recmsg.getVersion()));
+         });
+        /*
+        btnConnect.setOnClickListener(v -> {
                     while (!socketManager.isConnected()) {
                         try {
                             Thread.sleep(100);
@@ -126,15 +141,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start());
 */
-
         Log.d("error", "Error" + error);
         etIP = findViewById(R.id.etIP);
         etPort = findViewById(R.id.etPort);
         tvMessages = findViewById(R.id.tvMessages);
         etMessage = findViewById(R.id.etMessage);
-
-
-
     }
 
     @Override

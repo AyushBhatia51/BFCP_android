@@ -3,6 +3,7 @@ package com.example.apt.Clint;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.apt.JNIbfcp.JNIbfcpclass;
 import com.example.apt.JNIbfcp.bfcp_message;
 
 import java.io.BufferedInputStream;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 public class SocketAsync {
     private static final String TAG = "SocketAsync";
     private Socket socket;
+    public bfcp_message msg;
     private BufferedOutputStream bos;
     private BufferedInputStream bis;
     private OutputStream oss;
@@ -128,17 +130,22 @@ public class SocketAsync {
                     Log.d(TAG, "Entire message received");
                    // return newmsg;
                 }
+
                 commonHeaders = Arrays.copyOf(commonHeaders, in_length);
 
                 System.arraycopy(buffer, 0, commonHeaders, 12, total);
 
                 bfcp_message message = new bfcp_message(commonHeaders, new short[] { (short) 0, (short) in_length });
 
+
+                if (listener != null) {
+                    listener.onMessageReceived(message);
+                }
 // Clean up allocated buffers
                 buffer = null;
                 commonHeaders = null;
 
-                Log.d("bytt",String.valueOf(message));
+
 
             } catch (IOException e) {
                 Log.e(TAG, "Error receiving message", e);
@@ -169,6 +176,7 @@ public class SocketAsync {
     }
 
     public interface MessageListener {
-        void onMessageReceived(byte[] message);
+        void onMessageReceived(bfcp_message message);
+
     }
 }

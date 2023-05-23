@@ -47,4 +47,12 @@
         android:layout_height = "wrap_content"
         android:layout_alignParentBottom = "true"
         android:text = "SEND" />
+
+    <Button
+        android:id="@+id/parse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="110dp"
+        android:text="Button" />
 </RelativeLayout>

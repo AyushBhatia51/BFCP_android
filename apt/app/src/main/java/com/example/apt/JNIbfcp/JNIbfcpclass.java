@@ -2,7 +2,7 @@ package com.example.apt.JNIbfcp;
 
 import android.util.Log;
 
-import com.example.apt.Clint.bfcp_supported_list;
+import com.example.apt.Clint.bfcp_received_message;
 
 public class JNIbfcpclass extends bfcp_entity{
     static {
@@ -18,6 +18,7 @@ public class JNIbfcpclass extends bfcp_entity{
 
 
     public final native bfcp_message bfcp_build_message_Hello(bfcp_entity entity);
-    //public final native bfcp_message bfcp_build_message_HelloAck(bfcp_entity entity, bfcp_supported_list primitives, bfcp_supported_list attributes);
-    }
+    public final native bfcp_received_message bfcp_parse_message(bfcp_message message);
+
+}
 

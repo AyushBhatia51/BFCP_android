@@ -1,17 +1,17 @@
 package com.example.apt.Clint;
 
-public class BFCPReceivedMessageError {
+public class bfcp_received_message_error {
     private int attribute;
     private int code;
-    private BFCPReceivedMessageError next;
+    private bfcp_received_message_error next;
 
     // Constructors, getters, and setters
 
-    public BFCPReceivedMessageError() {
+    public bfcp_received_message_error() {
         // Default constructor
     }
 
-    public BFCPReceivedMessageError(int attribute, int code, BFCPReceivedMessageError next) {
+    public bfcp_received_message_error(int attribute, int code, bfcp_received_message_error next) {
         this.attribute = attribute;
         this.code = code;
         this.next = next;
@@ -35,11 +35,11 @@ public class BFCPReceivedMessageError {
         this.code = code;
     }
 
-    public BFCPReceivedMessageError getNext() {
+    public bfcp_received_message_error getNext() {
         return next;
     }
 
-    public void setNext(BFCPReceivedMessageError next) {
+    public void setNext(bfcp_received_message_error next) {
         this.next = next;
     }
 }

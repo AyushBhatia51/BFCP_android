@@ -1,20 +1,20 @@
 package com.example.apt.Clint;
 
-public class BFCPReceivedAttribute {
+public class bfcp_received_attribute {
     private int type;
     private int mandatoryBit;
     private int length;
     private int position;
     private int valid;
-    private BFCPReceivedAttribute next;
+    private bfcp_received_attribute next;
 
     // Constructors, getters, and setters
 
-    public BFCPReceivedAttribute() {
+    public bfcp_received_attribute() {
         // Default constructor
     }
 
-    public BFCPReceivedAttribute(int type, int mandatoryBit, int length, int position, int valid, BFCPReceivedAttribute next) {
+    public bfcp_received_attribute(int type, int mandatoryBit, int length, int position, int valid, bfcp_received_attribute next) {
         this.type = type;
         this.mandatoryBit = mandatoryBit;
         this.length = length;
@@ -65,11 +65,11 @@ public class BFCPReceivedAttribute {
         this.valid = valid;
     }
 
-    public BFCPReceivedAttribute getNext() {
+    public bfcp_received_attribute getNext() {
         return next;
     }
 
-    public void setNext(BFCPReceivedAttribute next) {
+    public void setNext(bfcp_received_attribute next) {
         this.next = next;
     }
 }

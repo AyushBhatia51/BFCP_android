@@ -2,32 +2,32 @@ package com.example.apt.Clint;
 
 import com.example.apt.JNIbfcp.bfcp_entity;
 
-public class BFCPReceivedMessage {
+public class bfcp_received_message {
     private bfcp_arguments arguments;
     private int version;
     private int reserved;
     private int primitive;
     private int length;
     private bfcp_entity entity;
-    private BFCPReceivedAttribute firstAttribute;
-    private BFCPReceivedMessageError errors;
+    private bfcp_received_attribute first_attribute;
+    private bfcp_received_message_error errors;
 
     // Constructors, getters, and setters
 
-    public BFCPReceivedMessage() {
+    public bfcp_received_message() {
         // Default constructor
     }
 
-    public BFCPReceivedMessage(bfcp_arguments arguments, int version, int reserved, int primitive,
-                               int length, bfcp_entity entity, BFCPReceivedAttribute firstAttribute,
-                               BFCPReceivedMessageError errors) {
+    public bfcp_received_message(bfcp_arguments arguments, int version, int reserved, int primitive,
+                                 int length, bfcp_entity entity, bfcp_received_attribute firstAttribute,
+                                 bfcp_received_message_error errors) {
         this.arguments = arguments;
         this.version = version;
         this.reserved = reserved;
         this.primitive = primitive;
         this.length = length;
         this.entity = entity;
-        this.firstAttribute = firstAttribute;
+        this.first_attribute = firstAttribute;
         this.errors = errors;
     }
 
@@ -81,19 +81,19 @@ public class BFCPReceivedMessage {
         this.entity = entity;
     }
 
-    public BFCPReceivedAttribute getFirstAttribute() {
-        return firstAttribute;
+    public bfcp_received_attribute getFirstAttribute() {
+        return first_attribute;
     }
 
-    public void setFirstAttribute(BFCPReceivedAttribute firstAttribute) {
-        this.firstAttribute = firstAttribute;
+    public void setFirstAttribute(bfcp_received_attribute firstAttribute) {
+        this.first_attribute = firstAttribute;
     }
 
-    public BFCPReceivedMessageError getErrors() {
+    public bfcp_received_message_error getErrors() {
         return errors;
     }
 
-    public void setErrors(BFCPReceivedMessageError errors) {
+    public void setErrors(bfcp_received_message_error errors) {
         this.errors = errors;
     }
 }

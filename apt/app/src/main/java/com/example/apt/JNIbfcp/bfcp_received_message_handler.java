@@ -1,6 +1,8 @@
 package com.example.apt.JNIbfcp;
 
 import com.example.apt.Clint.bfcp_arguments;
+import com.example.apt.Clint.bfcp_received_attribute;
+import com.example.apt.Clint.bfcp_received_message_error;
 
 public class bfcp_received_message_handler {
     bfcp_arguments arguments;

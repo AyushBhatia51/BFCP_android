@@ -46,6 +46,7 @@ public class bfcp_client {
     private static InetAddress serverAddress;
     private static int serverPort;
    public static bfcp_message message;
+   public static bfcp_received_message revmsg;
    public bfcp_message msg;
    public bfcp_message getmsg;
 
@@ -199,8 +200,17 @@ public class bfcp_client {
             return null;
         }
     }
-
-    /*public static int send_message_to_server(bfcp_message message) {
+public  bfcp_received_message bfcp_parse_message(bfcp_message message) {
+    revmsg = myclass.bfcp_parse_message(message);
+    if (revmsg != null) {
+        Log.d("DATA_lib", String.valueOf(revmsg.getLength()));
+        return revmsg;
+    }
+    else{
+        return null;
+    }
+}
+/*public static int send_message_to_server(bfcp_message message) {
 
         new Thread(() -> {
             final String SERVER_IP = "192.168.8.138";
