@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.apt.Clint.SocketAsync;
 import com.example.apt.Clint.StreamInitializer;
+import com.example.apt.Clint.bfcp_arguments;
 import com.example.apt.Clint.bfcp_client;
+import com.example.apt.Clint.bfcp_received_attribute;
 import com.example.apt.Clint.bfcp_received_message;
+import com.example.apt.Clint.bfcp_received_message_error;
 import com.example.apt.JNIbfcp.*;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -38,7 +41,13 @@ public class MainActivity extends AppCompatActivity {
     Socket socket;
     int SERVER_PORT =2345;
     private SocketAsync socketAsync;
-    private bfcp_message bfM;
+    private bfcp_message bfM,brM;
+    private bfcp_entity entity;
+    private bfcp_received_attribute firstAttribute;
+    private bfcp_received_message_error errors;
+    private bfcp_arguments arguments;
+
+
     private bfcp_received_message recmsg;
     DataOutputStream dataOutputStream;
     ObjectOutputStream objout;
@@ -106,11 +115,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("main", "Socket is not connected");
             }
         });
+//        bfcp_received_message brM = new bfcp_received_message();
+//
+//       brM.bfcp_received_message(arguments,12,0,12,12,entity,firstAttribute,errors);
+
 
          parse.setOnClickListener(v -> {
-             Log.d("rec",String.valueOf(bfM.getLength()));
              recmsg = newcli.bfcp_parse_message(bfM);
              Log.d("main", String.valueOf(recmsg.getVersion()));
+             Log.d("rek",String.valueOf(bfM));
          });
         /*
         btnConnect.setOnClickListener(v -> {

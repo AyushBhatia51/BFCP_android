@@ -18,7 +18,7 @@ public class bfcp_received_message {
         // Default constructor
     }
 
-    public bfcp_received_message(bfcp_arguments arguments, int version, int reserved, int primitive,
+    public void bfcp_received_message(bfcp_arguments arguments, int version, int reserved, int primitive,
                                  int length, bfcp_entity entity, bfcp_received_attribute firstAttribute,
                                  bfcp_received_message_error errors) {
         this.arguments = arguments;
